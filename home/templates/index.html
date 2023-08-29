@@ -18,12 +18,55 @@
 </head>
 <body>
     <h1>Chunking</h1>
-    <form action="" method="post">
+    <form action="{%url 'index'%}" method="post" id="upload-form">
         {%csrf_token%}
         <input type="file" name="file-field" id="file-field">
         
-        <button type="submit">ENVIAR</button>
+        <button type="submit" id="upload-button">ENVIAR</button>
     </form>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('file-field');
+            const uploadButton = document.getElementById('upload-button');
+            const form = document.getElementById('upload-form');
+            form
+            uploadButton.addEventListener('click', async function (event) {
+                event.preventDefault();
+                const file = fileInput.files[0];
+                const chunkSize = 4 * 1024 * 1024; // 4MB
+                const totalChunks = Math.ceil(file.size / chunkSize);
+                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value; // Obter o valor do token CSRF
+                
+                for (let i = 0; i < totalChunks; i++) {
+                    const start = i * chunkSize;
+                    const end = Math.min(start + chunkSize, file.size);
+                    const chunk = file.slice(start, end);
+
+                    const formData = new FormData();
+                    formData.append('chunk', chunk);
+                    formData.append('total_chunks', totalChunks);
+                    formData.append('chunk_number', i);
+                    console.log(chunk);
+                    try {
+                        const response = await fetch('/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: formData
+                        });
+
+                        // Aqui você pode tratar a resposta da requisição, se necessário
+                        console.log(response);
+                    } catch (error) {
+                        console.error('Erro na requisição:', error);
+                    }
+                }
+            });
+        });
+    </script>
     
 </body>
 </html>
