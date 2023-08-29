@@ -1,3 +1,3 @@
 # ChunkingDesafio
 Chunking
-![Alt text]()
+![Alt text](event-chunking.svg)
