@@ -31,7 +31,7 @@
             const fileInput = document.getElementById('file-field');
             const uploadButton = document.getElementById('upload-button');
             const form = document.getElementById('upload-form');
-            form
+            
             uploadButton.addEventListener('click', async function (event) {
                 event.preventDefault();
                 const file = fileInput.files[0];
@@ -48,6 +48,7 @@
                     formData.append('chunk', chunk);
                     formData.append('total_chunks', totalChunks);
                     formData.append('chunk_number', i);
+                    formData.append('file-name', file.name)
                     console.log(chunk);
                     try {
                         const response = await fetch('/', {
